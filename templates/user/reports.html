@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1>Reports</h1>
+    </div>
+
+    <div class="reports-filters">
+        <select id="report-type" class="form-control">
+            <option value="monthly">Monthly Report</option>
+            <option value="weekly">Weekly Report</option>
+            <option value="category">Category-wise Report</option>
+        </select>
+        <input type="month" id="report-month" class="form-control">
+        <button class="btn btn-primary" onclick="generateReport()">Generate Report</button>
+    </div>
+
+    <div id="report-results" class="report-results">
+        <p class="text-muted">Select report type and click Generate Report</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function generateReport() {
+        const type = document.getElementById('report-type').value;
+        const month = document.getElementById('report-month').value;
+        
+        const resultsDiv = document.getElementById('report-results');
+        resultsDiv.innerHTML = '<p class="text-muted">Generating report...</p>';
+
+        // For now, use analytics API
+        fetch('/api/analytics/summary')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    let html = '<div class="report-card">';
+                    html += '<h2>Monthly Summary Report</h2>';
+                    html += '<div class="report-summary">';
+                    html += `<div class="report-item"><strong>Total Income:</strong> ₹${data.income.toFixed(2)}</div>`;
+                    html += `<div class="report-item"><strong>Total Expenses:</strong> ₹${data.expenses.toFixed(2)}</div>`;
+                    html += `<div class="report-item"><strong>Savings:</strong> ₹${data.savings.toFixed(2)}</div>`;
+                    html += '</div>';
+                    
+                    if (data.top_categories.length > 0) {
+                        html += '<h3>Top Spending Categories</h3>';
+                        html += '<ul class="category-list">';
+                        data.top_categories.forEach(cat => {
+                            html += `<li>${cat.category}: ₹${cat.amount.toFixed(2)}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    html += '</div>';
+                    resultsDiv.innerHTML = html;
+                }
+            });
+    }
+</script>
+{% endblock %}
+

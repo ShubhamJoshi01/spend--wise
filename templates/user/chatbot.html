@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}AI Chatbot - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1>AI Chatbot Assistant</h1>
+        <p>Ask questions about your expenses in natural language</p>
+    </div>
+
+    <div class="chatbot-wrapper">
+        <div class="chatbot-examples">
+            <h3>💡 Example Queries</h3>
+            <div class="example-queries">
+                <button class="example-btn" onclick="useExample('Show my total expenses this month')">Total expenses this month</button>
+                <button class="example-btn" onclick="useExample('What did I spend on food?')">Food expenses</button>
+                <button class="example-btn" onclick="useExample('Show my income for this month')">Monthly income</button>
+                <button class="example-btn" onclick="useExample('Show my top 5 spending categories')">Top categories</button>
+                <button class="example-btn" onclick="useExample('How much did I spend last week?')">Last week expenses</button>
+                <button class="example-btn" onclick="useExample('Show all my transactions')">All transactions</button>
+            </div>
+        </div>
+
+        <div class="chatbot-container">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-message bot-message">
+                    <div class="message-content">
+                        <p>👋 Hello! I'm your expense tracking assistant. I can help you query your financial data using natural language.</p>
+                        <p><strong>Try asking:</strong></p>
+                        <ul>
+                            <li>"Show my total expenses this month"</li>
+                            <li>"What did I spend on food?"</li>
+                            <li>"Show my income for January"</li>
+                            <li>"What are my top spending categories?"</li>
+                        </ul>
+                        <p class="text-muted">Click the example queries above or type your own question!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chatbot-input-container">
+                <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Ask a question about your expenses..." onkeypress="handleChatKeyPress(event)">
+                <button class="btn btn-primary" onclick="sendChatMessage()" id="send-btn">
+                    <span id="send-text">Send</span>
+                    <span id="send-loading" style="display: none;">⏳</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let isProcessing = false;
+
+    function useExample(query) {
+        document.getElementById('chatbot-input').value = query;
+        sendChatMessage();
+    }
+
+    function handleChatKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendChatMessage();
+        }
+    }
+
+    function sendChatMessage() {
+        if (isProcessing) return;
+        
+        const input = document.getElementById('chatbot-input');
+        const message = input.value.trim();
+        
+        if (!message) return;
+
+        isProcessing = true;
+        const sendBtn = document.getElementById('send-btn');
+        const sendText = document.getElementById('send-text');
+        const sendLoading = document.getElementById('send-loading');
+        
+        sendBtn.disabled = true;
+        sendText.style.display = 'none';
+        sendLoading.style.display = 'inline';
+
+        // Add user message
+        addMessage(message, 'user');
+        input.value = '';
+
+        // Show loading
+        const loadingId = addMessage('🤔 Processing your query...', 'bot', true);
+
+        // Send to API
+        fetch('/api/chatbot/query', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({message: message})
+        })
+        .then(r => r.json())
+        .then(data => {
+            // Remove loading message
+            const loadingEl = document.getElementById(loadingId);
+            if (loadingEl) loadingEl.remove();
+
+            if (data.success) {
+                // Show explanation first
+                let responseHtml = `<div class="chat-response">`;
+                responseHtml += `<p class="response-explanation">${escapeHtml(data.explanation)}</p>`;
+                
+                if (data.rows && data.rows.length > 0) {
+                    responseHtml += `<p class="result-header">📊 Results (${data.row_count} ${data.row_count === 1 ? 'row' : 'rows'}):</p>`;
+                    responseHtml += '<div class="table-wrapper"><table class="result-table"><thead><tr>';
+                    data.columns.forEach(col => {
+                        responseHtml += `<th>${escapeHtml(col)}</th>`;
+                    });
+                    responseHtml += '</tr></thead><tbody>';
+                    data.rows.forEach(row => {
+                        responseHtml += '<tr>';
+                        row.forEach(cell => {
+                            const cellValue = cell || '';
+                            // Format currency if it looks like a number
+                            if (!isNaN(cellValue) && cellValue !== '') {
+                                responseHtml += `<td class="number-cell">₹${parseFloat(cellValue).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>`;
+                            } else {
+                                responseHtml += `<td>${escapeHtml(cellValue)}</td>`;
+                            }
+                        });
+                        responseHtml += '</tr>';
+                    });
+                    responseHtml += '</tbody></table></div>';
+                } else {
+                    responseHtml += '<p class="text-muted">✅ Query executed successfully, but no results found.</p>';
+                }
+
+                // Show SQL in collapsible section
+                responseHtml += `<details class="sql-details"><summary>🔍 View SQL Query</summary><pre class="sql-code">${escapeHtml(data.sql)}</pre></details>`;
+                responseHtml += `</div>`;
+
+                addMessage(responseHtml, 'bot');
+            } else {
+                let errorMsg = `<div class="error-response">`;
+                errorMsg += `<p><strong>❌ Error:</strong> ${escapeHtml(data.error)}</p>`;
+                if (data.raw) {
+                    errorMsg += `<details><summary>Raw response</summary><pre class="sql-code">${escapeHtml(data.raw)}</pre></details>`;
+                }
+                errorMsg += `<p class="text-muted">💡 Try rephrasing your question or use one of the example queries above.</p>`;
+                errorMsg += `</div>`;
+                addMessage(errorMsg, 'bot');
+            }
+        })
+        .catch(error => {
+            const loadingEl = document.getElementById(loadingId);
+            if (loadingEl) loadingEl.remove();
+            addMessage(`<div class="error-response"><p><strong>❌ Network Error:</strong> ${escapeHtml(error.message)}</p><p class="text-muted">Please check your connection and try again.</p></div>`, 'bot');
+        })
+        .finally(() => {
+            isProcessing = false;
+            sendBtn.disabled = false;
+            sendText.style.display = 'inline';
+            sendLoading.style.display = 'none';
+        });
+    }
+
+    function addMessage(content, type, isLoading = false) {
+        const messagesDiv = document.getElementById('chatbot-messages');
+        const messageId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        const messageDiv = document.createElement('div');
+        messageDiv.id = messageId;
+        messageDiv.className = `chat-message ${type}-message ${isLoading ? 'loading' : ''}`;
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'message-content';
+        if (typeof content === 'string' && (content.includes('<') || content.includes('&lt;'))) {
+            contentDiv.innerHTML = content;
+        } else {
+            contentDiv.textContent = content;
+        }
+        
+        messageDiv.appendChild(contentDiv);
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        
+        return messageId;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Focus input on load
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('chatbot-input').focus();
+    });
+</script>
+{% endblock %}
+

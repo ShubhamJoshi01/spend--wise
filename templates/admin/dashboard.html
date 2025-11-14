@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="page-header">
+        <h1>Admin Dashboard</h1>
+        <p>Manage users, transactions, and system settings</p>
+    </div>
+
+    <div class="admin-stats-grid">
+        <div class="stat-card">
+            <h3>Total Users</h3>
+            <p class="stat-value" id="total-users">-</p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Transactions</h3>
+            <p class="stat-value" id="total-transactions">-</p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Categories</h3>
+            <p class="stat-value" id="total-categories">-</p>
+        </div>
+    </div>
+
+    <div class="admin-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+            <a href="{{ url_for('admin_users') }}" class="btn btn-primary">Manage Users</a>
+            <a href="{{ url_for('admin_transactions') }}" class="btn btn-secondary">View All Transactions</a>
+            <a href="{{ url_for('admin_categories') }}" class="btn btn-secondary">Manage Categories</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

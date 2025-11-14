@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="page-header">
+        <h1>Welcome, {{ user.name }}!</h1>
+        <p>Here's your financial overview</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card stat-income">
+            <div class="stat-icon">💰</div>
+            <div class="stat-content">
+                <h3>Monthly Income</h3>
+                <p class="stat-value" id="monthly-income">₹0</p>
+            </div>
+        </div>
+
+        <div class="stat-card stat-expense">
+            <div class="stat-icon">💸</div>
+            <div class="stat-content">
+                <h3>Monthly Expenses</h3>
+                <p class="stat-value" id="monthly-expense">₹0</p>
+            </div>
+        </div>
+
+        <div class="stat-card stat-savings">
+            <div class="stat-icon">💵</div>
+            <div class="stat-content">
+                <h3>Savings</h3>
+                <p class="stat-value" id="monthly-savings">₹0</p>
+            </div>
+        </div>
+
+        <div class="stat-card stat-alerts">
+            <div class="stat-icon">🔔</div>
+            <div class="stat-content">
+                <h3>Active Alerts</h3>
+                <p class="stat-value" id="alert-count">0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <h2>Top Spending Categories</h2>
+            <div id="top-categories" class="category-list">
+                <p class="text-muted">Loading...</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Recent Transactions</h2>
+            <div id="recent-transactions" class="transaction-list">
+                <p class="text-muted">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+            <a href="{{ url_for('user_transactions') }}" class="btn btn-primary">Add Transaction</a>
+            <a href="{{ url_for('user_budgets') }}" class="btn btn-secondary">Manage Budgets</a>
+            <a href="{{ url_for('user_analytics') }}" class="btn btn-secondary">View Analytics</a>
+            <a href="{{ url_for('user_chatbot') }}" class="btn btn-secondary">Ask Chatbot</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Load dashboard data
+    fetch('/api/analytics/summary')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('monthly-income').textContent = '₹' + data.income.toFixed(2);
+                document.getElementById('monthly-expense').textContent = '₹' + data.expenses.toFixed(2);
+                document.getElementById('monthly-savings').textContent = '₹' + data.savings.toFixed(2);
+                
+                const topCatDiv = document.getElementById('top-categories');
+                if (data.top_categories.length > 0) {
+                    topCatDiv.innerHTML = data.top_categories.map(cat => 
+                        `<div class="category-item">
+                            <span>${cat.category}</span>
+                            <span class="amount">₹${cat.amount.toFixed(2)}</span>
+                        </div>`
+                    ).join('');
+                } else {
+                    topCatDiv.innerHTML = '<p class="text-muted">No expenses this month</p>';
+                }
+            }
+        });
+
+    // Load alerts count
+    fetch('/api/alerts')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const unread = data.alerts.filter(a => !a.is_read).length;
+                document.getElementById('alert-count').textContent = unread;
+            }
+        });
+
+    // Load recent transactions
+    fetch('/api/transactions')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.transactions.length > 0) {
+                const recentDiv = document.getElementById('recent-transactions');
+                recentDiv.innerHTML = data.transactions.slice(0, 5).map(t => 
+                    `<div class="transaction-item">
+                        <div>
+                            <strong>${t.category_name}</strong>
+                            <span class="text-muted">${new Date(t.date).toLocaleDateString()}</span>
+                        </div>
+                        <span class="amount ${t.type === 'income' ? 'income' : 'expense'}">
+                            ${t.type === 'income' ? '+' : '-'}₹${parseFloat(t.amount).toFixed(2)}
+                        </span>
+                    </div>`
+                ).join('');
+            } else {
+                document.getElementById('recent-transactions').innerHTML = '<p class="text-muted">No transactions yet</p>';
+            }
+        });
+</script>
+{% endblock %}
+

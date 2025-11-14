@@ -1,0 +1,131 @@
+-- Data export for database `expense_tracker`
+
+-- category
+INSERT INTO `category` (`categoryid`, `name`, `description`) VALUES (1, 'Food', 'Daily meals and groceries');
+INSERT INTO `category` (`categoryid`, `name`, `description`) VALUES (2, 'Travel', 'Transportation expenses');
+INSERT INTO `category` (`categoryid`, `name`, `description`) VALUES (3, 'Bills', 'Monthly utilities');
+INSERT INTO `category` (`categoryid`, `name`, `description`) VALUES (4, 'Entertainment', 'Movies, Subscriptions');
+
+-- login
+INSERT INTO `login` (`userid`, `password`, `role`) VALUES (1, 'pass123', 'user');
+INSERT INTO `login` (`userid`, `password`, `role`) VALUES (2, 'gurmeet@123', 'user');
+
+-- paymentmethod
+INSERT INTO `paymentmethod` (`methodid`, `type`, `details`) VALUES (1, 'UPI', 'Google Pay');
+INSERT INTO `paymentmethod` (`methodid`, `type`, `details`) VALUES (2, 'Credit Card', 'HDFC Card');
+INSERT INTO `paymentmethod` (`methodid`, `type`, `details`) VALUES (3, 'Cash', 'Offline Payment');
+
+-- transaction
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (1, 1, 1, '150.50', 'expense', '2025-01-01', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (2, 2, 2, '75.00', 'expense', '2025-01-02', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (3, 1, 3, '40.25', 'expense', '2025-01-03', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (4, 3, 4, '60.00', 'expense', '2025-01-04', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (5, 2, 1, '130.75', 'expense', '2025-01-05', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (6, 1, 2, '29.90', 'expense', '2025-01-06', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (7, 3, 3, '250.00', 'expense', '2025-01-07', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (8, 2, 4, '68.00', 'expense', '2025-01-08', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (9, 1, 1, '85.00', 'expense', '2025-01-09', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (10, 3, 2, '45.50', 'expense', '2025-01-10', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (11, 2, 3, '75.30', 'expense', '2025-01-11', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (12, 1, 4, '110.00', 'expense', '2025-01-12', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (13, 3, 1, '37.75', 'expense', '2025-01-13', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (14, 2, 2, '58.20', 'expense', '2025-01-14', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (15, 1, 3, '95.00', 'expense', '2025-01-15', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (16, 3, 4, '120.00', 'expense', '2025-01-16', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (17, 2, 1, '105.00', 'expense', '2025-01-17', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (18, 1, 2, '60.00', 'expense', '2025-01-18', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (19, 3, 3, '80.50', 'expense', '2025-01-19', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (20, 2, 4, '42.00', 'expense', '2025-01-20', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (21, 1, 1, '130.25', 'expense', '2025-01-21', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (22, 3, 2, '70.00', 'expense', '2025-01-22', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (23, 2, 3, '33.50', 'expense', '2025-01-23', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (24, 1, 4, '55.00', 'expense', '2025-01-24', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (25, 3, 1, '145.00', 'expense', '2025-01-25', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (26, 2, 2, '75.50', 'expense', '2025-01-26', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (27, 1, 3, '98.00', 'expense', '2025-01-27', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (28, 3, 4, '60.50', 'expense', '2025-01-28', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (29, 2, 1, '22.00', 'expense', '2025-01-29', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (30, 1, 2, '50.00', 'expense', '2025-01-30', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (31, 3, 3, '115.00', 'expense', '2025-01-31', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (32, 2, 4, '40.00', 'expense', '2025-02-01', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (33, 1, 1, '81.50', 'expense', '2025-02-02', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (34, 3, 2, '62.00', 'expense', '2025-02-03', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (35, 2, 3, '75.00', 'expense', '2025-02-04', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (36, 1, 4, '50.00', 'expense', '2025-02-05', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (37, 3, 1, '120.50', 'expense', '2025-02-06', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (38, 2, 2, '38.00', 'expense', '2025-02-07', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (39, 1, 3, '85.00', 'expense', '2025-02-08', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (40, 3, 4, '90.00', 'expense', '2025-02-09', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (41, 2, 1, '100.00', 'expense', '2025-02-10', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (42, 1, 2, '45.00', 'expense', '2025-02-11', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (43, 3, 3, '65.00', 'expense', '2025-02-12', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (44, 2, 4, '20.00', 'expense', '2025-02-13', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (45, 1, 1, '135.00', 'expense', '2025-02-14', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (46, 3, 2, '75.50', 'expense', '2025-02-15', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (47, 2, 3, '45.00', 'expense', '2025-02-16', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (48, 1, 4, '70.00', 'expense', '2025-02-17', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (49, 3, 1, '87.50', 'expense', '2025-02-18', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (50, 2, 2, '62.00', 'expense', '2025-02-19', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (51, 1, 3, '110.00', 'expense', '2025-02-20', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (52, 3, 4, '75.00', 'expense', '2025-02-21', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (53, 2, 1, '50.00', 'expense', '2025-02-22', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (54, 1, 2, '60.00', 'expense', '2025-02-23', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (55, 3, 3, '100.00', 'expense', '2025-02-24', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (56, 2, 4, '45.00', 'expense', '2025-02-25', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (57, 1, 1, '80.00', 'expense', '2025-02-26', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (58, 3, 2, '70.00', 'expense', '2025-02-27', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (59, 2, 3, '55.00', 'expense', '2025-02-28', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (60, 1, 4, '40.00', 'expense', '2025-03-01', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (61, 3, 1, '120.00', 'expense', '2025-03-02', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (62, 2, 2, '85.00', 'expense', '2025-03-03', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (63, 1, 3, '95.00', 'expense', '2025-03-04', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (64, 3, 4, '110.00', 'expense', '2025-03-05', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (65, 2, 1, '60.00', 'expense', '2025-03-06', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (66, 1, 2, '112.00', 'expense', '2025-03-07', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (67, 3, 3, '120.00', 'expense', '2025-03-08', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (68, 2, 4, '45.00', 'expense', '2025-03-09', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (69, 1, 1, '100.00', 'expense', '2025-03-10', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (70, 3, 2, '75.00', 'expense', '2025-03-11', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (71, 2, 3, '95.00', 'expense', '2025-03-12', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (72, 1, 4, '85.00', 'expense', '2025-03-13', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (73, 3, 1, '130.00', 'expense', '2025-03-14', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (74, 2, 2, '110.00', 'expense', '2025-03-15', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (75, 1, 3, '40.00', 'expense', '2025-03-16', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (76, 3, 4, '55.00', 'expense', '2025-03-17', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (77, 2, 1, '80.00', 'expense', '2025-03-18', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (78, 1, 2, '65.00', 'expense', '2025-03-19', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (79, 3, 3, '100.00', 'expense', '2025-03-20', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (80, 2, 4, '35.00', 'expense', '2025-03-21', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (81, 1, 1, '120.00', 'expense', '2025-03-22', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (82, 3, 2, '75.00', 'expense', '2025-03-23', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (83, 2, 3, '110.00', 'expense', '2025-03-24', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (84, 1, 4, '90.00', 'expense', '2025-03-25', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (85, 3, 1, '130.00', 'expense', '2025-03-26', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (86, 2, 2, '45.00', 'expense', '2025-03-27', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (87, 1, 3, '60.00', 'expense', '2025-03-28', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (88, 3, 4, '85.00', 'expense', '2025-03-29', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (89, 2, 1, '75.00', 'expense', '2025-03-30', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (90, 1, 2, '50.00', 'expense', '2025-03-31', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (91, 3, 3, '90.00', 'expense', '2025-04-01', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (92, 2, 4, '40.00', 'expense', '2025-04-02', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (93, 1, 1, '110.00', 'expense', '2025-04-03', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (94, 3, 2, '65.00', 'expense', '2025-04-04', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (95, 2, 3, '95.00', 'expense', '2025-04-05', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (96, 1, 4, '75.00', 'expense', '2025-04-06', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (97, 3, 1, '100.00', 'expense', '2025-04-07', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (98, 2, 2, '45.00', 'expense', '2025-04-08', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (99, 1, 3, '55.00', 'expense', '2025-04-09', 2);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (100, 3, 4, '70.00', 'expense', '2025-04-10', 3);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (101, 3, 2, '100.00', 'expense', '2025-10-15', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (102, 3, 2, '100.00', 'expense', '2025-10-15', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (103, 3, 2, '100.00', 'expense', '2025-10-15', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (104, 3, 3, '100.00', 'expense', '2025-10-15', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (106, 1, 1, '120.50', 'income', '2025-11-12', 1);
+INSERT INTO `transaction` (`transid`, `userid`, `categoryid`, `amount`, `type`, `date`, `paymentmethod`) VALUES (107, NULL, NULL, '0.00', 'income', NULL, NULL);
+
+-- user
+INSERT INTO `user` (`userid`, `name`, `email`, `contact`) VALUES (1, 'Shubham Joshi', 'sj945814@gmail.com', '9876543210');
+INSERT INTO `user` (`userid`, `name`, `email`, `contact`) VALUES (2, 'Gurmeet Rana', 'ranagur361@gmail.com', '9876501234');
+INSERT INTO `user` (`userid`, `name`, `email`, `contact`) VALUES (3, 'Ashutosh Rauthan', 'charlie@example.com', '555-0103');
+INSERT INTO `user` (`userid`, `name`, `email`, `contact`) VALUES (4, 'Radhika Rastogi', 'diana@example.com', '555-0104');
+

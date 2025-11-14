@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1>Analytics & Insights</h1>
+        <div class="time-period-selector">
+            <label for="time-period">Time Period:</label>
+            <select id="time-period" class="form-control" onchange="loadAnalytics()">
+                <option value="current_month">Current Month</option>
+                <option value="last_3_months">Last 3 Months</option>
+                <option value="last_6_months" selected>Last 6 Months</option>
+                <option value="last_year">Last Year</option>
+                <option value="all_time">All Time</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="analytics-grid">
+        <div class="analytics-card">
+            <h2>Monthly Summary</h2>
+            <div id="monthly-summary">
+                <div class="summary-item">
+                    <span>Income:</span>
+                    <span id="summary-income" class="amount income">₹0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Expenses:</span>
+                    <span id="summary-expense" class="amount expense">₹0</span>
+                </div>
+                <div class="summary-item">
+                    <span>Savings:</span>
+                    <span id="summary-savings" class="amount">₹0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-card">
+            <h2>Top Spending Categories</h2>
+            <div id="top-categories-chart">
+                <p class="text-muted">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="analytics-card full-width">
+        <h2>Monthly Trends (Last 6 Months)</h2>
+        <canvas id="trends-chart" width="400" height="200"></canvas>
+    </div>
+
+    <div class="analytics-card full-width">
+        <h2>Category Distribution</h2>
+        <canvas id="category-chart" width="400" height="200"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let trendsChart = null;
+    let categoryChart = null;
+
+    function loadAnalytics() {
+        const timePeriod = document.getElementById('time-period').value;
+        
+        // Show loading state
+        document.getElementById('summary-income').textContent = 'Loading...';
+        document.getElementById('summary-expense').textContent = 'Loading...';
+        document.getElementById('summary-savings').textContent = 'Loading...';
+        
+        // Load analytics data with time period
+        fetch(`/api/analytics/summary?period=${timePeriod}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                // Update summary
+                document.getElementById('summary-income').textContent = '₹' + data.income.toFixed(2);
+                document.getElementById('summary-expense').textContent = '₹' + data.expenses.toFixed(2);
+                document.getElementById('summary-savings').textContent = '₹' + data.savings.toFixed(2);
+
+                // Top categories
+                const topCatDiv = document.getElementById('top-categories-chart');
+                if (data.top_categories.length > 0) {
+                    topCatDiv.innerHTML = data.top_categories.map((cat, idx) => 
+                        `<div class="category-bar">
+                            <div class="category-label">
+                                <span>${idx + 1}. ${cat.category}</span>
+                                <span class="amount">₹${cat.amount.toFixed(2)}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${data.expenses > 0 ? (cat.amount / data.expenses * 100) : 0}%"></div>
+                            </div>
+                        </div>`
+                    ).join('');
+                } else {
+                    topCatDiv.innerHTML = '<p class="text-muted">No spending data available</p>';
+                }
+
+                // Monthly/Daily trends chart
+                const trendLabels = data.monthly_trends.months || data.monthly_trends.days || [];
+                const trendsContainer = document.querySelector('#trends-chart')?.parentElement;
+                
+                if (trendLabels.length > 0) {
+                    // Ensure canvas exists
+                    let trendsCanvas = document.getElementById('trends-chart');
+                    if (!trendsCanvas) {
+                        if (trendsContainer) {
+                            trendsContainer.innerHTML = '<h2>Monthly Trends</h2><canvas id="trends-chart" width="400" height="200"></canvas>';
+                            trendsCanvas = document.getElementById('trends-chart');
+                        }
+                    }
+                    
+                    if (trendsCanvas) {
+                        const ctx = trendsCanvas.getContext('2d');
+                        
+                        // Destroy existing chart if it exists
+                        if (trendsChart) {
+                            trendsChart.destroy();
+                        }
+                        
+                        const chartTitle = data.period === 'current_month' ? 'Daily Trends (Current Month)' : 'Monthly Trends';
+                        if (trendsContainer) {
+                            const h2 = trendsContainer.querySelector('h2');
+                            if (h2) h2.textContent = chartTitle;
+                        }
+                        
+                        trendsChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: trendLabels,
+                            datasets: [{
+                                label: 'Income (₹)',
+                                data: data.monthly_trends.income,
+                                borderColor: 'rgb(34, 197, 94)',
+                                backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                                tension: 0.1
+                            }, {
+                                label: 'Expenses (₹)',
+                                data: data.monthly_trends.expense,
+                                borderColor: 'rgb(239, 68, 68)',
+                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                },
+                                x: {
+                                    ticks: {
+                                        maxRotation: 45,
+                                        minRotation: 45
+                                    }
+                                }
+                            }
+                        }
+                        });
+                    }
+                } else {
+                    if (trendsContainer) {
+                        trendsContainer.innerHTML = '<h2>Monthly Trends</h2><p class="text-muted">Not enough data for trends chart</p>';
+                    }
+                    if (trendsChart) {
+                        trendsChart.destroy();
+                        trendsChart = null;
+                    }
+                }
+
+                // Category distribution pie chart
+                const categoryContainer = document.querySelector('#category-chart')?.parentElement;
+                
+                if (data.all_categories && data.all_categories.length > 0) {
+                    // Ensure canvas exists
+                    let categoryCanvas = document.getElementById('category-chart');
+                    if (!categoryCanvas) {
+                        if (categoryContainer) {
+                            categoryContainer.innerHTML = '<h2>Category Distribution</h2><canvas id="category-chart" width="400" height="200"></canvas>';
+                            categoryCanvas = document.getElementById('category-chart');
+                        }
+                    }
+                    
+                    if (categoryCanvas) {
+                        const ctx2 = categoryCanvas.getContext('2d');
+                        
+                        // Destroy existing chart if it exists
+                        if (categoryChart) {
+                            categoryChart.destroy();
+                        }
+                        
+                        categoryChart = new Chart(ctx2, {
+                        type: 'pie',
+                        data: {
+                            labels: data.all_categories.map(c => c.category),
+                            datasets: [{
+                                data: data.all_categories.map(c => c.amount),
+                                backgroundColor: [
+                                    'rgba(79, 70, 229, 0.8)',
+                                    'rgba(236, 72, 153, 0.8)',
+                                    'rgba(34, 197, 94, 0.8)',
+                                    'rgba(251, 191, 36, 0.8)',
+                                    'rgba(239, 68, 68, 0.8)',
+                                    'rgba(59, 130, 246, 0.8)',
+                                    'rgba(168, 85, 247, 0.8)',
+                                    'rgba(20, 184, 166, 0.8)'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'right'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = '₹' + context.parsed.toFixed(2);
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                            return label + ': ' + value + ' (' + percentage + '%)';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        });
+                    }
+                } else {
+                    if (categoryContainer) {
+                        categoryContainer.innerHTML = '<h2>Category Distribution</h2><p class="text-muted">No category data available</p>';
+                    }
+                    if (categoryChart) {
+                        categoryChart.destroy();
+                        categoryChart = null;
+                    }
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading analytics:', error);
+            alert('Error loading analytics data');
+        });
+    }
+
+    // Load analytics on page load
+    loadAnalytics();
+</script>
+{% endblock %}
+

@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Transactions - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1>Transactions</h1>
+        <button class="btn btn-primary" onclick="showAddTransactionModal()">+ Add Transaction</button>
+    </div>
+
+    <div class="filters">
+        <select id="filter-type" class="form-control">
+            <option value="">All Types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+        </select>
+        <input type="date" id="filter-date" class="form-control">
+        <button class="btn btn-secondary" onclick="loadTransactions()">Filter</button>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Payment Method</th>
+                </tr>
+            </thead>
+            <tbody id="transactions-table">
+                <tr><td colspan="5" class="text-center">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Transaction Modal -->
+<div id="add-transaction-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Add Transaction</h2>
+            <span class="close" onclick="closeModal('add-transaction-modal')">&times;</span>
+        </div>
+        <form id="transaction-form" onsubmit="addTransaction(event)">
+            <div class="form-group">
+                <label>Type</label>
+                <select id="trans-type" class="form-control" required>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="trans-category" class="form-control" required></select>
+            </div>
+            <div class="form-group">
+                <label>Amount</label>
+                <input type="number" id="trans-amount" step="0.01" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="trans-date" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select id="trans-payment" class="form-control"></select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('add-transaction-modal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Transaction</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let categories = [];
+    let paymentMethods = [];
+
+    // Load categories and payment methods
+    Promise.all([
+        fetch('/api/categories').then(r => r.json()),
+        fetch('/api/payment-methods').then(r => r.json())
+    ]).then(([catData, pmData]) => {
+        if (catData.success) {
+            categories = catData.categories;
+            const select = document.getElementById('trans-category');
+            select.innerHTML = categories.map(c => `<option value="${c.categoryid}">${c.name}</option>`).join('');
+        }
+        if (pmData.success) {
+            paymentMethods = pmData.payment_methods;
+            const select = document.getElementById('trans-payment');
+            select.innerHTML = '<option value="">None</option>' + 
+                paymentMethods.map(pm => `<option value="${pm.methodid}">${pm.type}</option>`).join('');
+        }
+    });
+
+    // Set default date to today
+    document.getElementById('trans-date').valueAsDate = new Date();
+
+    function loadTransactions() {
+        fetch('/api/transactions')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    let transactions = data.transactions;
+                    
+                    // Apply filters
+                    const typeFilter = document.getElementById('filter-type').value;
+                    const dateFilter = document.getElementById('filter-date').value;
+                    
+                    if (typeFilter) {
+                        transactions = transactions.filter(t => t.type === typeFilter);
+                    }
+                    if (dateFilter) {
+                        transactions = transactions.filter(t => t.date === dateFilter);
+                    }
+
+                    const tbody = document.getElementById('transactions-table');
+                    if (transactions.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No transactions found</td></tr>';
+                    } else {
+                        tbody.innerHTML = transactions.map(t => `
+                            <tr>
+                                <td>${new Date(t.date).toLocaleDateString()}</td>
+                                <td>${t.category_name || 'N/A'}</td>
+                                <td><span class="badge badge-${t.type}">${t.type}</span></td>
+                                <td class="amount ${t.type === 'income' ? 'income' : 'expense'}">
+                                    ${t.type === 'income' ? '+' : '-'}₹${parseFloat(t.amount).toFixed(2)}
+                                </td>
+                                <td>${t.paymentmethod || 'N/A'}</td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            });
+    }
+
+    function showAddTransactionModal() {
+        document.getElementById('add-transaction-modal').style.display = 'block';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    function addTransaction(event) {
+        event.preventDefault();
+        
+        // Get form values
+        const type = document.getElementById('trans-type').value;
+        const categoryid = document.getElementById('trans-category').value;
+        const amount = document.getElementById('trans-amount').value;
+        const date = document.getElementById('trans-date').value;
+        const paymentmethod = document.getElementById('trans-payment').value;
+        
+        // Validate required fields
+        if (!categoryid || !amount || !date) {
+            alert('Please fill in all required fields');
+            return;
+        }
+        
+        const data = {
+            type: type,
+            categoryid: parseInt(categoryid),
+            amount: parseFloat(amount),
+            date: date,
+            paymentmethod: paymentmethod && paymentmethod !== '' ? parseInt(paymentmethod) : null
+        };
+
+        console.log('Sending transaction data:', data); // Debug log
+
+        fetch('/api/transactions', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(r => r.json())
+        .then(response => {
+            if (response.success) {
+                alert('Transaction added successfully!');
+                closeModal('add-transaction-modal');
+                document.getElementById('transaction-form').reset();
+                // Reset date to today
+                document.getElementById('trans-date').valueAsDate = new Date();
+                loadTransactions();
+            } else {
+                // Show user-friendly error message
+                let errorMsg = response.error || 'Unknown error';
+                if (response.error_type === 'budget_exceeded') {
+                    if (confirm(errorMsg + '\n\nDo you want to proceed anyway? (You may need to adjust your budget)')) {
+                        // User wants to proceed - we could add a flag to bypass budget check
+                        // For now, just show the error
+                        alert('Transaction blocked by budget limit. Please adjust your budget or reduce the amount.');
+                    }
+                } else {
+                    alert('Error: ' + errorMsg);
+                }
+                console.error('Transaction error:', response);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+            console.error('Transaction fetch error:', error);
+        });
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('add-transaction-modal');
+        if (event.target === modal) {
+            closeModal('add-transaction-modal');
+        }
+    }
+
+    // Load transactions on page load
+    loadTransactions();
+</script>
+{% endblock %}
+

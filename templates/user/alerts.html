@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Alerts - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="page-header">
+        <h1>Budget Alerts</h1>
+    </div>
+
+    <div id="alerts-container" class="alerts-container">
+        <p class="text-muted">Loading alerts...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function loadAlerts() {
+        fetch('/api/alerts')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const container = document.getElementById('alerts-container');
+                    if (data.alerts.length === 0) {
+                        container.innerHTML = '<p class="text-muted">No alerts</p>';
+                    } else {
+                        container.innerHTML = data.alerts.map(alert => `
+                            <div class="alert-card alert-${alert.alert_type}">
+                                <div class="alert-header">
+                                    <h3>${alert.alert_type === 'exceeded' ? '⚠️ Budget Exceeded' : '⚠️ Budget Warning'}</h3>
+                                    <span class="alert-date">${new Date(alert.created_at).toLocaleString()}</span>
+                                </div>
+                                <p>${alert.message}</p>
+                                <p class="text-muted">Category: ${alert.category_name || 'N/A'}</p>
+                                ${!alert.is_read ? '<button class="btn btn-sm btn-secondary" onclick="markAsRead(' + alert.alertid + ')">Mark as Read</button>' : ''}
+                            </div>
+                        `).join('');
+                    }
+                }
+            });
+    }
+
+    function markAsRead(alertId) {
+        // Would need API endpoint for this
+        loadAlerts();
+    }
+
+    loadAlerts();
+</script>
+{% endblock %}
+
